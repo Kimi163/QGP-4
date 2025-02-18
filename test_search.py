@@ -1,31 +1,18 @@
 import pytest
-from selene import browser, be, have
+from selene import browser, have, be
 
-@pytest.fixture()#scope='session')
-def setting_browser():
-    browser.config.window_width = 1920  # задает ширину окна браузера
-    browser.config.window_height = 1080  # задает высоту окна браузера
+@pytest.fixture(autouse=True)
+def browser_context():
+    browser.config.window_height = 1366
+    browser.config.window_width = 1024
+    browser.open('https://ya.ru')
     yield
-    browser.quit() # закрывает браузер после выполнения теста
-    print('Браузер закрывается') #teardown
+    browser.quit()
 
+def test_success_search():
+    browser.element('#text').should(be.blank).type('yashaka/selene').press_enter()
+    browser.element('html').should(have.text('core strength is its user-oriented API'))
 
-def test_first(setting_browser):
-    browser.open("https://duckduckgo.com")
-    browser.element('[name="q"]').should(be.blank).type('prothai.live').press_enter()
-    browser.element('html').should(have.text('Самые актуальные новости о Тайланде'))
-
-def test_second(setting_browser):
-    browser.open("https://duckduckgo.com")
-    browser.element('[name="q"]').should(be.blank).type('#4@^$@#&59@65(@#*&$612345').press_enter()
-    browser.element('html').should(have.text('Free math'))
-
-def test_second_one(setting_browser):
-    browser.open("https://duckduckgo.com")
-    browser.element('[name="q"]').should(be.blank).type('#4@^$@#&59@65(@#*&$612345').press_enter()
-    browser.element('html').should(have.text('#4@^$@#&59@65(@#*&$612345'))
-
-def test_third(setting_browser):
-    browser.open("https://www.google.com/")
-    browser.element('[name="q"]').should(be.blank).type('prothai.live').press_enter()
-    browser.element('html').should(have.text('Об этой странице'))
+def test_empty_search():
+    browser.element('#text').should(be.blank).type('dlskldskdlk').press_enter()
+    browser.element('html').should(have.text('Ничего не нашли'))

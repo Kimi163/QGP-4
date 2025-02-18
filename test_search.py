@@ -5,7 +5,7 @@ from selene import browser, have, be
 def browser_context():
     browser.config.window_height = 1366
     browser.config.window_width = 1024
-    browser.open('https://ya.ru')
+    browser.open('https://www.google.com/')
     yield
     browser.quit()
 
